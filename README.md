@@ -11,3 +11,13 @@
 
 - Run `flake8` command inside project folder
 - Commit
+
+## Test
+Test with netcat
+
+### Ping
+```shell script
+$ nc 127.0.0.1 8080
+Cli: 01asdfghjklpoiuytrewqasdfghjklmnbvcxzasdfghjklopiuhygtfrdeswaqsd
+Srv: 02
+```
