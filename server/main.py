@@ -19,10 +19,12 @@ def receive(conn, bytes):
     while count < bytes:
         buf = conn.recv(bytes - count)
         if len(buf) == 0:
-            raise ConnectionClosedException('Expected %d, received %d' % (bytes, count))
+            s = 'Expected %d, received %d' % (bytes, count)
+            raise ConnectionClosedException(s)
         count = count + len(buf)
         data = data + buf.decode()
     return data
+
 
 def main():
     args = parse_arguments()
@@ -38,7 +40,7 @@ def main():
             break
         try:
             if receive(conn, 2) == '01':
-                data = receive(conn, 62)
+                receive(conn, 62)
                 conn.send(b'02')
         except ConnectionClosedException as e:
             print("Invalid data received: " + str(e))
