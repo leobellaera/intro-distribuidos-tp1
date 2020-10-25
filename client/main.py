@@ -1,5 +1,6 @@
 import argparse
 import socket
+from output_manager import OutputManager
 
 
 def parse_arguments():
@@ -18,7 +19,7 @@ def parse_arguments():
     arg_s = parser.add_argument("-s",
                                 "--server",
                                 help="server ip address",
-                                dest="ADDR")
+                                dest="server")  # todo: set ADDR on usage
     arg_c = parser.add_argument("-c",
                                 "--count",
                                 help="stop after <count> repplies",
@@ -41,7 +42,7 @@ def parse_arguments():
     arg_d = parser.add_argument("-d",
                                 "--dest",
                                 help="destination IP address",
-                                dest="ADDR")
+                                dest="dest")  # todo: set ADDR on usage
 
     usage = parser.format_usage()
     parser.usage = usage.replace("usage: ", "")   # grab original usage
@@ -52,6 +53,7 @@ def parse_arguments():
 
 
 def main():
+    output_manager = OutputManager()
     args = parse_arguments()
     server_address = (args.server, 8080)
 
