@@ -13,18 +13,37 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def receive(conn, bytes):
+def receive(conn, byts):
+    """
+    Receives fixed length bytes from socket conn and returns decoded data as
+    str
+    """
+
     count = 0
     data = ""
-    while count < bytes:
-        buf = conn.recv(bytes - count)
+    while count < byts:
+        buf = conn.recv(byts - count)
         if len(buf) == 0:
-            s = 'Expected %d, received %d' % (bytes, count)
+            s = 'Expected %d, received %d' % (byts, count)
             raise ConnectionClosedException(s)
         count = count + len(buf)
         data = data + buf.decode()
     return data
 
+def send(conn, data):
+    """
+    Sends string encoded to socket conn
+    """
+
+    total_sent = 0
+    length = len(data)
+    data = data.encode()
+    while total_sent < length:
+        count = conn.send(data[total_sent:])
+        if count == 0:
+            s = 'Conn closed after %d of %d' % (total_sent, length)
+            raise ConnectionClosedException(s)
+        total_sent = total_sent + count
 
 def main():
     args = parse_arguments()
@@ -39,9 +58,14 @@ def main():
         if not conn:
             break
         try:
-            if receive(conn, 2) == '01':
+            cmd = receive(conn, 2)
+            if cmd == "01":
                 receive(conn, 62)
-                conn.send(b'02')
+                send(conn, "02")
+            elif cmd == "03":
+                #count = int(receive(conn, 4))
+                #for _ in range(count):
+                print("tbd")
         except ConnectionClosedException as e:
             print("Invalid data received: " + str(e))
     sock.close()
