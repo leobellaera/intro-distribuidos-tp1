@@ -1,7 +1,15 @@
 import argparse
 import socket
+import random
+import string
+from datetime import datetime as dt
 
 from server.ConnectionClosedException import ConnectionClosedException
+
+
+def get_random_string(length):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(length))
 
 
 def parse_arguments():
@@ -30,6 +38,7 @@ def receive(conn, byts):
         data = data + buf.decode()
     return data
 
+
 def send(conn, data):
     """
     Sends string encoded to socket conn
@@ -44,6 +53,7 @@ def send(conn, data):
             s = 'Conn closed after %d of %d' % (total_sent, length)
             raise ConnectionClosedException(s)
         total_sent = total_sent + count
+
 
 def main():
     args = parse_arguments()
@@ -63,11 +73,26 @@ def main():
                 receive(conn, 62)
                 send(conn, "02")
             elif cmd == "03":
-                #count = int(receive(conn, 4))
-                #for _ in range(count):
-                print("tbd")
+                count = int(receive(conn, 4))
+                results = []
+                for _ in range(count):
+                    before = dt.now()
+                    send(conn, "01" + get_random_string(62))
+                    rcv = receive(conn, 2)
+                    if rcv != "02":
+                        raise ValueError("Expected 02, received %s", rcv)
+                    delta = dt.now() - before
+                    delta = round(delta.seconds +
+                                  delta.microseconds/1000000, 3)*1000
+                    results.append("{:05d}".format(int(delta)))
+                out = "04" + "".join(results)
+                send(conn, out)
         except ConnectionClosedException as e:
             print("Invalid data received: " + str(e))
+        except ValueError as e:
+            print("Invalid data received: " + str(e))
+        finally:
+            conn.close()
     sock.close()
 
 

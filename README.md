@@ -21,3 +21,13 @@ $ nc 127.0.0.1 8080
 Cli: 01asdfghjklpoiuytrewqasdfghjklmnbvcxzasdfghjklopiuhygtfrdeswaqsd
 Srv: 02
 ```
+# Server Ping
+```shell script
+$ nc 127.0.0.1 8080
+Cli: 030002
+Srv: 01asdfghjklpoiuytrewqasdfghjklmnbvcxzasdfghjklopiuhygtfrdeswaqsd
+Cli: 02
+Srv: 01asdfghjklpoiuytrewqasdfghjklmnbvcxzasdfghjklopiuhygtfrdeswaqsd
+Cli: 02
+Srv: 040516400363
+```
