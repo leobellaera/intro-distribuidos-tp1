@@ -16,11 +16,12 @@ def parse_arguments():
                          help="decrease output verbosity",
                          action='store_true')
 
-    arg_s = parser.add_argument("-s",
-                                "--server",
-                                help="server ip address",
-                                dest="server",
-                                metavar='')  # todo: set ADDR on usage
+    parser.add_argument("-s",
+                         "--server",
+                         help="server ip address",
+                         dest="server",
+                         metavar='',
+                         required=True)  # todo: set ADDR on usage
 
     p_group = parser.add_mutually_exclusive_group()
     p_group.add_argument("-p",
@@ -36,17 +37,17 @@ def parse_arguments():
                          help="proxy ping",
                          action='store_true')
 
-    arg_c = parser.add_argument("-c",
-                                "--count",
-                                help="stop after <count> repplies",
-                                dest="count",
-                                metavar='')  # todo: set COUNT on
+    parser.add_argument("-c",
+                         "--count",
+                         help="stop after <count> repplies",
+                         dest="count",
+                         metavar='')  # todo: set COUNT on usage
 
-    arg_d = parser.add_argument("-d",
-                                "--dest",
-                                help="destination IP address",
-                                dest="dest",
-                                metavar='')  # todo: set ADDR on
+    parser.add_argument("-d",
+                         "--dest",
+                         help="destination IP address",
+                         dest="dest",
+                         metavar='')  # todo: set ADDR on usage
 
     return parser.parse_args()
 
