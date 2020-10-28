@@ -1,7 +1,8 @@
-import sys
 import socket
-from server.ping import *
-from server.ConnectionClosedException import ConnectionClosedException
+
+from utils import *
+from constants import *
+from exceptions import ConnectionClosedException
 
 
 class Server:
@@ -13,13 +14,8 @@ class Server:
 
     def run(self):
         while True:
-            # when EOF reached, finish
-            line = sys.stdin.readline()
-            if not line:
-                break
-
             conn, addr = self.sock.accept()
-            if not conn:
+            if not conn:  #todo print error msg
                 break
 
             try:

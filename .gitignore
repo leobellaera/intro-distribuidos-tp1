@@ -5,3 +5,6 @@
 /.idea/inspectionProfiles/profiles_settings.xml
 /.idea/tp1.iml
 /.idea/vcs.xml
+.idea/
+client/__pycache__/
+server/__pycache__/
