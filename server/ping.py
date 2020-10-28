@@ -13,14 +13,14 @@ class DirectPing:
     def run(self):
         while True:
             receive(self.conn, PACKAGE_LEN)
-            send(self.conn, ACK_LEN)
+            send(self.conn, ACK_MSG)
 
 
 class ReversePing:
     def __init__(self, conn):
-        self.conn = conn
         send(conn, ACK_MSG)
-        self.count = socket.ntohl(int(receive(conn, COUNT_LEN)))
+        self.count = int(receive(conn, COUNT_LEN))
+        self.conn = conn
 
     def run(self):
         for i in range(self.count):
@@ -37,15 +37,15 @@ class ReversePing:
             delta = round((delta.seconds + delta.microseconds / 1000000.0) * 1000, 1)
             delta = "{:07.1f}".format(delta)
             send(self.conn, delta)
-
+        self.conn.close()
 
 class ProxyPing:
     def __init__(self, conn):
         self.client_conn = conn
 
-        self.count = socket.ntohl(int(receive(conn, COUNT_LEN)))
+        self.count = int(receive(conn, COUNT_LEN))
 
-        addr_len = socket.ntohl(int(receive(conn, DEST_ADDR_LEN)))
+        addr_len = int(receive(conn, DEST_ADDR_LEN))
         dest_addr_split = receive(conn, addr_len).split(':')
         dest_addr = (dest_addr_split[0], dest_addr_split[1])
 

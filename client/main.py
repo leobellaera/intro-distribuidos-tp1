@@ -2,12 +2,13 @@ import argparse
 import sys
 
 from client.client import Client
+from common.exceptions import ConnectionClosedException
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='<Poner una descripción>')
 
-    v_group = parser.add_mutually_exclusive_group()
+    v_group = parser.add_mutually_exclusive_group(required=True)
     v_group.add_argument("-v",
                          "--verbose",
                          help="increase output verbosity",
@@ -24,7 +25,7 @@ def parse_arguments():
                         metavar='',
                         required=True)
 
-    p_group = parser.add_mutually_exclusive_group()
+    p_group = parser.add_mutually_exclusive_group(required=True)
     p_group.add_argument("-p",
                          "--ping",
                          help="direct ping",
@@ -57,16 +58,21 @@ def parse_arguments():
 
 def main():
     args = parse_arguments()
-    split = args.server.split(":")
-    if len(split) != 2 and split[1].isdigit():
-        raise ValueError("Invalid server Address")
     try:
-        cli = Client(split[0], int(split[1]))
-        if args.ping is not None:
-            cli.direct_ping(args.count)
+        cli = Client(args.server, args.count)
+        if args.ping:
+            cli.run_direct_ping()
+        elif args.reverse:
+            cli.run_reverse_ping()
+        else:
+            pass  # todo proxy
         cli.close()
     except ConnectionRefusedError as e:
         print(f"Unable to connect to server: {str(e)}", file=sys.stderr)
+    except ConnectionClosedException as e:
+        pass  # todo print error msg
+    finally:
+        cli.close()
 
 
 if __name__ == "__main__":

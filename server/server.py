@@ -28,6 +28,5 @@ class Server:
 
             except ConnectionClosedException as e:
                 conn.close()
-                print(str(e))
 
         self.sock.close()

@@ -41,7 +41,7 @@ class OutputManager:
         packs_lost_percentage = round(packs_lost * 100 / n_packs)
         inf_transm = f"{n_packs} packets transmitted"
         inf_recvd = f"{n_packs_rcvd} received"
-        inf_lost = f"{packs_lost_percentage} % packet loss"
+        inf_lost = f"{packs_lost_percentage}% packet loss"
         inf_time = f"time {round(sum(rtt_list), 1)}ms"
         std_dev = 0
         if len(rtt_list) > 1:
