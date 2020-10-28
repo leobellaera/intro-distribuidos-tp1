@@ -1,7 +1,7 @@
 import random
 import string
 
-from server.ConnectionClosedException import ConnectionClosedException
+from exceptions import ConnectionClosedException
 
 
 def send(conn, data):
