@@ -11,11 +11,13 @@ from common.utils import send, receive, get_random_string
 
 class Client:
 
-    def __init__(self, ip, count):
+    def __init__(self, ip, count, verbose):
         """
         Receives an IP and creates a connection with a ping server
         """
         self.count = count
+        self.verbose = verbose
+
         self.out_mgr = OutputManager()
         server_address = (ip, SV_PORT)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -23,6 +25,7 @@ class Client:
         name = socket.gethostname()
         self.address = socket.gethostbyname(name)
         self.dest_address = ip
+
 
     def close(self):
         self.sock.close()
@@ -63,8 +66,9 @@ class Client:
                 continue
 
             rtt_list.append(delta)
-            self.out_mgr.print_latest_message(PACKAGE_LEN,
-                                              self.dest_address, i+1, delta)
+            if self.verbose:
+                self.out_mgr.print_latest_message(PACKAGE_LEN,
+                                            self.dest_address, i+1, delta)
 
         self.out_mgr.print_statistics(self.dest_address, self.count,
                                       self.count-packet_loss, rtt_list)
@@ -99,8 +103,9 @@ class Client:
                     continue
 
                 rtt_list.append(rtt)
-                self.out_mgr.print_latest_message(PACKAGE_LEN,
-                                                  self.dest_address, i + 1, rtt)
+                if self.verbose:
+                    self.out_mgr.print_latest_message(PACKAGE_LEN,
+                                                      self.dest_address, i + 1, rtt)
                 i += 1
             except ConnectionClosedException:
                 break

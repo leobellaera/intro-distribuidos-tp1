@@ -6,7 +6,7 @@ from common.exceptions import ConnectionClosedException
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description='<Poner una descripción>')
+    parser = argparse.ArgumentParser(description='A useful tool to measure latency between two end-hosts')
 
     v_group = parser.add_mutually_exclusive_group(required=True)
     v_group.add_argument("-v",
@@ -45,13 +45,13 @@ def parse_arguments():
                         dest="count",
                         type=int,
                         default=4,
-                        metavar='')  # todo: set COUNT on usage
+                        metavar='')
 
     parser.add_argument("-d",
                         "--dest",
                         help="destination IP address",
                         dest="dest",
-                        metavar='')  # todo: set ADDR on usage
+                        metavar='')
 
     return parser.parse_args()
 
@@ -59,7 +59,7 @@ def parse_arguments():
 def main():
     args = parse_arguments()
     try:
-        cli = Client(args.server, args.count)
+        cli = Client(args.server, args.count, args.verbose)
         if args.ping:
             cli.run_direct_ping()
         elif args.reverse:
