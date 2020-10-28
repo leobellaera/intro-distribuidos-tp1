@@ -1,8 +1,7 @@
-import socket
-
-from utils import *
-from constants import *
-from exceptions import ConnectionClosedException
+from common.utils import *
+from common.constants import *
+from common.exceptions import ConnectionClosedException
+from server.ping import *
 
 
 class Server:

@@ -2,8 +2,8 @@ import socket
 from datetime import datetime as dt
 
 from client.output_manager import OutputManager
-from constants import DIRECT_PING, PACKAGE_BYTES, ACK_MSG, TIMEOUT_SECONDS
-from utils import send, receive, get_random_string
+from common.constants import DIRECT_PING, PACKAGE_LEN, ACK_MSG, TIMEOUT_SECONDS
+from common.utils import send, receive, get_random_string
 
 
 class Client:
@@ -45,7 +45,7 @@ class Client:
         rtt_list = []
         for i in range(count):
             before = dt.now()
-            send(self.sock, get_random_string(PACKAGE_BYTES))
+            send(self.sock, get_random_string(PACKAGE_LEN))
             rcv = receive(self.sock, 2)
             delta = dt.now() - before
 
@@ -54,7 +54,7 @@ class Client:
 
             delta = (delta.seconds + delta.microseconds / 1000000.0) * 1000
             rtt_list.append(delta)
-            self.out_mgr.print_latest_message(PACKAGE_BYTES,
+            self.out_mgr.print_latest_message(PACKAGE_LEN,
                                               self.dest_address, i+1, delta)
             if delta >= TIMEOUT_SECONDS*1000:
                 lost += 1

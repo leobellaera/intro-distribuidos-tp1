@@ -1,4 +1,4 @@
-from constants import TIMEOUT_SECONDS
+from common.constants import TIMEOUT_SECONDS
 import statistics as st
 
 
