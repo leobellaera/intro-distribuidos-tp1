@@ -1,5 +1,5 @@
 import argparse
-from server import Server
+from server.server import Server
 
 
 def parse_arguments():

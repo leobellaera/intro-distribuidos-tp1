@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from client.Client import Client
+from client.client import Client
 
 
 def parse_arguments():
