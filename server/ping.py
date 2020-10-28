@@ -1,6 +1,6 @@
 from datetime import datetime as dt
 from utils import *
-from server.constants import *
+from constants import *
 
 
 class DirectPing:
