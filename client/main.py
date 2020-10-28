@@ -59,13 +59,19 @@ def parse_arguments():
 def main():
     args = parse_arguments()
     try:
-        cli = Client(args.server, args.count, args.verbose)
+        cli = Client(args.server, args.count, args.verbose, args.dest)
         if args.ping:
             cli.run_direct_ping()
         elif args.reverse:
             cli.run_reverse_ping()
         else:
-            pass  # todo proxy
+            if not args.dest:
+                print(f"Destination ip and port needed", file=sys.stderr)
+                return
+            elif args.dest and len(args.dest.split(':')) != 2:
+                print(f"Destination ip must be likely <ip>:<port>", file=sys.stderr)
+                return
+            cli.run_proxy_ping()
         cli.close()
     except ConnectionRefusedError as e:
         print(f"Unable to connect to server: {str(e)}", file=sys.stderr)

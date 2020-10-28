@@ -1,22 +1,24 @@
 import socket
+import sys
 from datetime import datetime as dt
 
 from client.output_manager import OutputManager
-from common.constants import DIRECT_PING, PACKAGE_LEN,\
-    ACK_MSG, TIMEOUT_SECONDS, ACK_LEN, SV_PORT, COUNT_LEN,\
-    RTT_LEN, DISCARDED_PCK_RTT, REVERSE_PING
+from common.constants import DIRECT_PING, PACKAGE_LEN, \
+    ACK_MSG, TIMEOUT_SECONDS, ACK_LEN, SV_PORT, COUNT_LEN, \
+    RTT_LEN, DISCARDED_PCK_RTT, REVERSE_PING, PROXY_PING, DEST_ADDR_LEN
 from common.exceptions import ConnectionClosedException
 from common.utils import send, receive, get_random_string
 
 
 class Client:
 
-    def __init__(self, ip, count, verbose):
+    def __init__(self, ip, count, verbose, proxy_address=None):
         """
         Receives an IP and creates a connection with a ping server
         """
         self.count = count
         self.verbose = verbose
+        self.proxy_address = proxy_address
 
         self.out_mgr = OutputManager()
         server_address = (ip, SV_PORT)
@@ -25,7 +27,6 @@ class Client:
         name = socket.gethostname()
         self.address = socket.gethostbyname(name)
         self.dest_address = ip
-
 
     def close(self):
         self.sock.close()
@@ -68,10 +69,10 @@ class Client:
             rtt_list.append(delta)
             if self.verbose:
                 self.out_mgr.print_latest_message(PACKAGE_LEN,
-                                            self.dest_address, i+1, delta)
+                                                  self.dest_address, i + 1, delta)
 
         self.out_mgr.print_statistics(self.dest_address, self.count,
-                                      self.count-packet_loss, rtt_list)
+                                      self.count - packet_loss, rtt_list)
 
     def run_reverse_ping(self):
         """
@@ -88,11 +89,15 @@ class Client:
         _format = '0' + str(COUNT_LEN) + 'd'
         send(self.sock, format(self.count, _format))
 
+        self.out_mgr.print_file_version()
+        self.out_mgr.print_operation(True, False, False)
+        self.out_mgr.print_server(self.dest_address)
+        self.out_mgr.print_client(self.address)
+
         packet_loss = 0
         rtt_list = []
-        i = 0
 
-        while True:
+        for i in range(self.count):
             try:
                 receive(self.sock, PACKAGE_LEN)
                 send(self.sock, ACK_MSG)
@@ -106,9 +111,51 @@ class Client:
                 if self.verbose:
                     self.out_mgr.print_latest_message(PACKAGE_LEN,
                                                       self.dest_address, i + 1, rtt)
-                i += 1
             except ConnectionClosedException:
                 break
+
+        self.out_mgr.print_statistics(self.dest_address, self.count,
+                                      self.count - packet_loss, rtt_list)
+
+    def run_proxy_ping(self):
+        """
+        Executes proxy ping count times and prints output
+        """
+
+        # handshaking
+        send(self.sock, PROXY_PING)
+
+        format_count = '0' + str(COUNT_LEN) + 'd'
+        send(self.sock, format(self.count, format_count))
+
+        format_dest_addr = '0' + str(DEST_ADDR_LEN) + 'd'
+        send(self.sock, format(len(self.proxy_address), format_dest_addr))
+        send(self.sock, self.proxy_address)
+
+        sig = receive(self.sock, ACK_LEN)
+        if sig != ACK_MSG:
+            print(f"Unable to connect to proxy server", file=sys.stderr)
+            return
+
+        packet_loss = 0
+        rtt_list = []
+        for i in range(self.count):
+            _sig = receive(self.sock, ACK_LEN)
+            if _sig != ACK_MSG:
+                print(f"Connection between server and proxy ended unexpectedly",
+                      file=sys.stderr)
+                return
+
+            rtt = float(receive(self.sock, RTT_LEN))
+
+            if rtt == DISCARDED_PCK_RTT:
+                packet_loss += 1
+                continue
+
+            rtt_list.append(rtt)
+            if self.verbose:
+                self.out_mgr.print_latest_message(PACKAGE_LEN,
+                                                  self.dest_address, i + 1, rtt)
 
         self.out_mgr.print_statistics(self.dest_address, self.count,
                                       self.count - packet_loss, rtt_list)

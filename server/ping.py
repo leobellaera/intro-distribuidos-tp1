@@ -1,6 +1,5 @@
 import socket
 from datetime import datetime as dt
-from common.exceptions import ConnectionClosedException
 from common.utils import *
 from common.constants import *
 
@@ -39,6 +38,7 @@ class ReversePing:
             send(self.conn, delta)
         self.conn.close()
 
+
 class ProxyPing:
     def __init__(self, conn):
         self.client_conn = conn
@@ -47,16 +47,16 @@ class ProxyPing:
 
         addr_len = int(receive(conn, DEST_ADDR_LEN))
         dest_addr_split = receive(conn, addr_len).split(':')
-        dest_addr = (dest_addr_split[0], dest_addr_split[1])
+        dest_addr = (dest_addr_split[0], int(dest_addr_split[1]))
 
         # create socket and connect to proxy
         self.proxy_conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.proxy_conn.connect(dest_addr)
+        self.proxy_conn.connect(dest_addr)  # todo atrapar excepcion para que no rompa el sv
 
         # handshaking with proxy sv to begin direct ping
         try:
             send(self.proxy_conn, DIRECT_PING)
-            receive(self.proxy_conn, ACK_MSG)
+            receive(self.proxy_conn, ACK_LEN)
         except ConnectionClosedException as e:
             send(self.client_conn, ERR_MSG)
             raise ConnectionClosedException(str(e))
