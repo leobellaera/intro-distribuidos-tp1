@@ -137,6 +137,11 @@ class Client:
             print(f"Unable to connect to proxy server", file=sys.stderr)
             return
 
+        self.out_mgr.print_file_version()
+        self.out_mgr.print_operation(False, False, True)
+        self.out_mgr.print_server(self.dest_address)
+        self.out_mgr.print_client(self.address)
+
         packet_loss = 0
         rtt_list = []
         for i in range(self.count):
