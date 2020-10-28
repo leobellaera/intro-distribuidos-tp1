@@ -1,4 +1,5 @@
 import socket
+from socket import gaierror
 from datetime import datetime as dt
 from common.utils import *
 from common.constants import *
@@ -51,13 +52,15 @@ class ProxyPing:
 
         # create socket and connect to proxy
         self.proxy_conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.proxy_conn.connect(dest_addr)  # todo atrapar excepcion para que no rompa el sv
+
 
         # handshaking with proxy sv to begin direct ping
         try:
+            self.proxy_conn.connect(dest_addr)
             send(self.proxy_conn, DIRECT_PING)
             receive(self.proxy_conn, ACK_LEN)
-        except ConnectionClosedException as e:
+        except (gaierror, ConnectionRefusedError, ConnectionClosedException) \
+                as e:
             send(self.client_conn, ERR_MSG)
             raise ConnectionClosedException(str(e))
 
