@@ -49,11 +49,19 @@ class ProxyPing:
         dest_addr_split = receive(conn, addr_len).split(':')
         dest_addr = (dest_addr_split[0], dest_addr_split[1])
 
-        # Create socket and connect to proxy todo handling errors
+        # create socket and connect to proxy
         self.proxy_conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.proxy_conn.connect(dest_addr)
 
-        send(self.client_conn, ACK_MSG)  #todo 'er' if error occurred
+        # handshaking with proxy sv to begin direct ping
+        try:
+            send(self.proxy_conn, DIRECT_PING)
+            receive(self.proxy_conn, ACK_MSG)
+        except ConnectionClosedException as e:
+            send(self.client_conn, ERR_MSG)
+            raise ConnectionClosedException(str(e))
+
+        send(self.client_conn, ACK_MSG)
 
     def run(self):
         for i in range(self.count):
