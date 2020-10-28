@@ -19,7 +19,7 @@ class Server:
                 break
 
             try:
-                ping_type = receive(conn, PING_BYTES)
+                ping_type = receive(conn, PING_TYPE_LEN)
                 if ping_type == DIRECT_PING:
                     DirectPing(conn).run()
                 elif ping_type == REVERSE_PING:
