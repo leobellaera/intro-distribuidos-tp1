@@ -1,5 +1,6 @@
 import argparse
 import sys
+from socket import gaierror
 
 from client.client import Client
 from common.exceptions import ConnectionClosedException
@@ -73,12 +74,10 @@ def main():
                 return
             cli.run_proxy_ping()
         cli.close()
-    except ConnectionRefusedError as e:
+    except (gaierror, ConnectionRefusedError) as e:
         print(f"Unable to connect to server: {str(e)}", file=sys.stderr)
     except ConnectionClosedException as e:
         pass  # todo print error msg
-    finally:
-        cli.close()
 
 
 if __name__ == "__main__":
