@@ -36,6 +36,7 @@ class Server:
                 print("DONE!")
             except ConnectionClosedException as e:
                 print(f"ERROR: {str(e)}")
+            finally:
                 conn.close()
 
         self.sock.close()
