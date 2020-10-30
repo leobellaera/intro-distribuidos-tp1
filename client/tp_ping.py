@@ -61,7 +61,7 @@ def parse_arguments():
 def main():
     args = parse_arguments()
 
-    if args.count <= 0:
+    if args.count not in range(1000000):
         print("Bad number of packets to transmit.", file=sys.stderr)
         return
 

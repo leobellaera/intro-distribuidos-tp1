@@ -46,19 +46,28 @@ rtt min/avg/max/mdev = 1319.435/10043.896/35520.565/16985.240 ms
 ```
 
 ## Run Commands
+
 ### Server 
 ```shell script
-$ python3 -m server.main
-```
-
-### Client 
-```shell script
-$ python3 -m client.main -s localhost -c 4 -v -p
-$ python3 -m client.main -s localhost -c 4 -v -r
-$ python3 -m client.main -s localhost -c 4 -v -x -d 127.0.0.1:8081
+$ python3 -m server.tp_ping_srv
 ```
 
 ### Proxy Server 
 ```shell script
-$ python3 -m server.main -P 8081
+$ python3 -m server.tp_ping_srv -P 8081
+```
+
+### Client - Direct Ping
+```shell script
+$ python3 -m client.tp_ping -s localhost -c 4 -v -p
+```
+
+### Client - Reverse Ping
+```shell script
+$ python3 -m client.tp_ping -s localhost -c 4 -v -r
+```
+
+### Client - Direct Ping
+```shell script
+$ python3 -m client.tp_ping -s localhost -c 4 -v -x -d 127.0.0.1:8081
 ```
