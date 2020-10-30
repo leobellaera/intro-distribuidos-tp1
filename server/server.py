@@ -25,13 +25,17 @@ class Server:
             try:
                 ping_type = receive(conn, PING_TYPE_LEN)
                 if ping_type == DIRECT_PING:
+                    print("Running Direct Ping")
                     DirectPing(conn).run()
                 elif ping_type == REVERSE_PING:
+                    print("Running Reverse Ping")
                     ReversePing(conn).run()
                 elif ping_type == PROXY_PING:
+                    print("Running Proxy Ping")
                     ProxyPing(conn).run()
-
-            except ConnectionClosedException:
+                print("DONE!")
+            except ConnectionClosedException as e:
+                print(f"ERROR: {str(e)}")
                 conn.close()
 
         self.sock.close()

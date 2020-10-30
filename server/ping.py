@@ -14,7 +14,10 @@ class DirectPing:
 
     def run(self):
         while True:
-            receive(self.conn, PACKAGE_LEN)
+            try:
+                receive(self.conn, PACKAGE_LEN)
+            except ConnectionClosedException:
+                break  # Error is expected as client closes connection wh done
             send(self.conn, ACK_MSG)
 
 
@@ -76,9 +79,9 @@ class ProxyPing:
             try:
                 send(self.proxy_conn, get_random_string(PACKAGE_LEN))
                 receive(self.proxy_conn, ACK_LEN)
-            except ConnectionClosedException:
+            except ConnectionClosedException as e:
                 send(self.client_conn, ERR_MSG)
-                return
+                raise ConnectionClosedException(str(e))
 
             final_dt = dt.now()
             send(self.client_conn, ACK_MSG)
