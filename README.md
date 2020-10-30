@@ -45,5 +45,20 @@ Client Address: 127.0.1.1
 rtt min/avg/max/mdev = 1319.435/10043.896/35520.565/16985.240 ms
 ```
 
-## Test server
-TBD
+## Run Commands
+### Server 
+```shell script
+$ python3 -m server.main
+```
+
+### Client 
+```shell script
+$ python3 -m client.main -s localhost -c 4 -v -p
+$ python3 -m client.main -s localhost -c 4 -v -r
+$ python3 -m client.main -s localhost -c 4 -v -x -d 127.0.0.1:8081
+```
+
+### Proxy Server 
+```shell script
+$ python3 -m server.main -P 8081
+```
