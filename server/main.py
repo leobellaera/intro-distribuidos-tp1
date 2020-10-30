@@ -12,10 +12,13 @@ def parse_arguments():
 
 
 def main():
-    args = parse_arguments()
-    address = (args.host, args.port)
-    sv = Server(address)
-    sv.run()
+    try:
+        args = parse_arguments()
+        address = (args.host, args.port)
+        sv = Server(address)
+        sv.run()
+    except KeyboardInterrupt:
+        print("\nServer disconnected")
 
 
 if __name__ == "__main__":
