@@ -60,7 +60,8 @@ class Client:
             if rcv != ACK_MSG:
                 raise ValueError(f"Expected {ACK_MSG}, received {rcv}")
 
-            delta = round((delta.seconds + delta.microseconds / 1000000.0) * 1000, 1)
+            delta = round((delta.seconds + delta.microseconds / 1000000.0) *
+                          1000, 1)
 
             if delta >= (TIMEOUT_SECONDS * 1000):
                 packet_loss += 1
@@ -68,8 +69,8 @@ class Client:
 
             rtt_list.append(delta)
             if self.verbose:
-                self.out_mgr.print_latest_message(PACKAGE_LEN,
-                                                  self.dest_address, i + 1, delta)
+                self.out_mgr.print_latest_message(
+                    PACKAGE_LEN, self.dest_address, i + 1, delta)
 
         self.out_mgr.print_statistics(self.dest_address, self.count,
                                       self.count - packet_loss, rtt_list)
@@ -109,8 +110,8 @@ class Client:
 
                 rtt_list.append(rtt)
                 if self.verbose:
-                    self.out_mgr.print_latest_message(PACKAGE_LEN,
-                                                      self.dest_address, i + 1, rtt)
+                    self.out_mgr.print_latest_message(
+                        PACKAGE_LEN, self.dest_address, i + 1, rtt)
             except ConnectionClosedException:
                 break
 
@@ -134,7 +135,7 @@ class Client:
 
         sig = receive(self.sock, ACK_LEN)
         if sig != ACK_MSG:
-            print(f"Unable to connect to proxy server", file=sys.stderr)
+            print("Unable to connect to proxy server", file=sys.stderr)
             return
 
         self.out_mgr.print_file_version()
@@ -147,8 +148,8 @@ class Client:
         for i in range(self.count):
             _sig = receive(self.sock, ACK_LEN)
             if _sig != ACK_MSG:
-                print(f"Connection between server and proxy ended unexpectedly",
-                      file=sys.stderr)
+                print("Connection between server and proxy ended " +
+                      "unexpectedly", file=sys.stderr)
                 return
 
             rtt = float(receive(self.sock, RTT_LEN))
@@ -159,8 +160,8 @@ class Client:
 
             rtt_list.append(rtt)
             if self.verbose:
-                self.out_mgr.print_latest_message(PACKAGE_LEN,
-                                                  self.dest_address, i + 1, rtt)
+                self.out_mgr.print_latest_message(
+                    PACKAGE_LEN, self.dest_address, i + 1, rtt)
 
         self.out_mgr.print_statistics(self.dest_address, self.count,
                                       self.count - packet_loss, rtt_list)

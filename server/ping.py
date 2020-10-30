@@ -1,8 +1,10 @@
 import socket
 from socket import gaierror
 from datetime import datetime as dt
-from common.utils import *
-from common.constants import *
+from common.utils import send, receive, get_random_string, \
+    ConnectionClosedException
+from common.constants import ACK_MSG, PACKAGE_LEN, COUNT_LEN, ACK_LEN, \
+    TIMEOUT_SECONDS, DISCARDED_PCK_RTT, DEST_ADDR_LEN, DIRECT_PING, ERR_MSG
 
 
 class DirectPing:
@@ -34,7 +36,8 @@ class ReversePing:
                 send(self.conn, str(DISCARDED_PCK_RTT))
                 continue
 
-            delta = round((delta.seconds + delta.microseconds / 1000000.0) * 1000, 1)
+            delta = round((delta.seconds + delta.microseconds / 1000000.0) *
+                          1000, 1)
             delta = "{:07.1f}".format(delta)
             send(self.conn, delta)
         self.conn.close()
@@ -52,7 +55,6 @@ class ProxyPing:
 
         # create socket and connect to proxy
         self.proxy_conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
 
         # handshaking with proxy sv to begin direct ping
         try:
@@ -86,8 +88,7 @@ class ProxyPing:
                 send(self.client_conn, str(DISCARDED_PCK_RTT))
                 continue
 
-            delta = round((delta.seconds + delta.microseconds / 1000000.0) * 1000, 1)
+            delta = round((delta.seconds + delta.microseconds / 1000000.0) *
+                          1000, 1)
             delta = "{:07.1f}".format(delta)
             send(self.client_conn, delta)
-
-

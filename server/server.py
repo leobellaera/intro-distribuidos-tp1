@@ -1,7 +1,11 @@
-from common.utils import *
-from common.constants import *
+import sys
+import socket
+
+from common.constants import PROXY_PING, REVERSE_PING, BACKLOG, \
+    PING_TYPE_LEN, DIRECT_PING
 from common.exceptions import ConnectionClosedException
-from server.ping import *
+from common.utils import receive
+from server.ping import DirectPing, ReversePing, ProxyPing
 
 
 class Server:
@@ -14,7 +18,8 @@ class Server:
     def run(self):
         while True:
             conn, addr = self.sock.accept()
-            if not conn:  #todo print error msg
+            if not conn:
+                print("Server socket closed", file=sys.stderr)
                 break
 
             try:
@@ -26,7 +31,7 @@ class Server:
                 elif ping_type == PROXY_PING:
                     ProxyPing(conn).run()
 
-            except ConnectionClosedException as e:
+            except ConnectionClosedException:
                 conn.close()
 
         self.sock.close()

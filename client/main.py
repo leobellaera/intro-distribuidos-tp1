@@ -7,7 +7,8 @@ from common.exceptions import ConnectionClosedException
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description='A useful tool to measure latency between two end-hosts')
+    parser = argparse.ArgumentParser(
+        description='A useful tool to measure latency between two end-hosts')
 
     v_group = parser.add_mutually_exclusive_group(required=True)
     v_group.add_argument("-v",
@@ -67,17 +68,18 @@ def main():
             cli.run_reverse_ping()
         else:
             if not args.dest:
-                print(f"Destination ip and port needed", file=sys.stderr)
+                print("Destination ip and port needed", file=sys.stderr)
                 return
             elif args.dest and len(args.dest.split(':')) != 2:
-                print(f"Destination ip must be likely <ip>:<port>", file=sys.stderr)
+                print("Destination ip must be likely <ip>:<port>",
+                      file=sys.stderr)
                 return
             cli.run_proxy_ping()
         cli.close()
     except (gaierror, ConnectionRefusedError) as e:
         print(f"Unable to connect to server: {str(e)}", file=sys.stderr)
     except ConnectionClosedException as e:
-        pass  # todo print error msg
+        print(f"Connection Closed: {str(e)}", file=sys.stderr)
 
 
 if __name__ == "__main__":
