@@ -60,6 +60,11 @@ def parse_arguments():
 
 def main():
     args = parse_arguments()
+
+    if args.count <= 0:
+        print("Bad number of packets to transmit.", file=sys.stderr)
+        return
+
     try:
         cli = Client(args.server, args.count, args.verbose, args.dest)
         if args.ping:
